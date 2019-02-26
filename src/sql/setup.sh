@@ -18,8 +18,8 @@ export PGDATABASE=ccdd_$(date +'%Y_%m_%d_%H%M%S')
 
 createdb "$PGDATABASE"
 
-psql -v ON_ERROR_STOP=1 < dpdloader/dpd_structure.sql # empty schema for testing
-psql -v ON_ERROR_STOP=1 < dpdloader/dpd_constraints.sql # empty schema for testing
+# psql -v ON_ERROR_STOP=1 < dpdloader/dpd_structure.sql # empty schema for testing
+# psql -v ON_ERROR_STOP=1 < dpdloader/dpd_constraints.sql # empty schema for testing
 
 # DPD extract load
 pgloader "$baseDir/dpdloader/dpdload.pgload"
