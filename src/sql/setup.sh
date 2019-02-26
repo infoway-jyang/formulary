@@ -18,8 +18,8 @@ export PGDATABASE=ccdd_$(date +'%Y_%m_%d_%H%M%S')
 
 createdb "$PGDATABASE"
 
-# psql -v ON_ERROR_STOP=1 < dpdloader/dpd_structure.sql # empty schema for testing
-# psql -v ON_ERROR_STOP=1 < dpdloader/dpd_constraints.sql # empty schema for testing
+psql -v ON_ERROR_STOP=1 < dpdloader/dpd_structure.sql # empty schema for testing
+psql -v ON_ERROR_STOP=1 < dpdloader/dpd_constraints.sql # empty schema for testing
 
 # DPD extract load
 pgloader "$baseDir/dpdloader/dpdload.pgload"
@@ -129,3 +129,11 @@ psql -c "copy (select * from qa_mp_ntp_tm_relationship_duplicates_code) to STDOU
 
 echo
 echo Generated "$PGDATABASE" and output in "$distDir"
+
+dpd_old_database="dpd";
+dpd_old_schema="dpd_old";
+
+pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
+psql "$PGDATABASE" < dpdchanges.sql
+rm -f dpdchanges.sql
+psql -v ON_ERROR_STOP=1 < dpdchanges/schema.sql
