@@ -1,8 +1,8 @@
 #!/bin/bash -e
 # Must set environment variables PGHOST, PGUSER and PGPASSWORD. PGDATABASE must be unset
 
-ccdd_qa_release_date="20181205"
-ccdd_current_release_date="20181210"
+ccdd_qa_release_date="20190201"
+ccdd_current_release_date="20190207"
 ccdd_current_date=$(date +'%Y%m%d')
 
 
@@ -131,7 +131,7 @@ echo
 echo Generated "$PGDATABASE" and output in "$distDir"
 
 dpd_old_database="dpd";
-dpd_old_schema="dpd_old";
+dpd_old_schema="dpd_20181101";
 
 pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
 psql "$PGDATABASE" < dpdchanges.sql
