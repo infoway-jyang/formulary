@@ -135,5 +135,7 @@ dpd_old_schema="dpd_20181101";
 
 pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
 psql "$PGDATABASE" < dpdchanges.sql
+
+psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
 rm -f dpdchanges.sql
 psql -v ON_ERROR_STOP=1 < dpdchanges/schema.sql
