@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS dpd_changes.route_changes;
 DROP TABLE IF EXISTS dpd_changes.pharmaceutical_form_changes;
 DROP TABLE IF EXISTS dpd_changes.active_ingredient_changes;
 DROP TABLE IF EXISTS dpd_changes.drugs;
+DROP TABLE IF EXISTS dpd_changes.dpd_changed_drug_codes;
 
 SELECT drug_new.* into dpd_changes.new_drug
 FROM dpd.drug_product as drug_new LEFT JOIN dpd_old.drug_product as drug_old ON
@@ -15,9 +16,9 @@ FROM dpd.drug_product as drug_new LEFT JOIN dpd_old.drug_product as drug_old ON
 WHERE drug_old.drug_code is null AND drug_new."class" = 'Human';
 
 SELECT drug_code into dpd_changes.drugs
-From public.ccdd_mp_release_candidate
+From ccdd.mp_release_candidate
 left join dpd.drug_product
-on public.ccdd_mp_release_candidate."Health_Canada_identifier" = dpd.drug_product.drug_identification_number;
+on ccdd.mp_release_candidate."Health_Canada_identifier" = dpd.drug_product.drug_identification_number;
 
 SELECT drug_new.brand_name as new_brand_name, drug_old.brand_name as old_brand_name, dpd_changes.drugs.drug_code into dpd_changes.drug_product_changes
 FROM dpd_changes.drugs

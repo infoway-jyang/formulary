@@ -26,9 +26,9 @@ SET check_function_bodies = false;
 --
 -- object: ccdd | type: SCHEMA --
 -- DROP SCHEMA IF EXISTS ccdd CASCADE;
-CREATE SCHEMA ccdd;
--- ddl-end --
-ALTER SCHEMA ccdd OWNER TO postgres;
+-- CREATE SCHEMA ccdd;
+-- -- ddl-end --
+-- ALTER SCHEMA ccdd OWNER TO postgres;
 -- ddl-end --
 
 SET search_path TO pg_catalog,public,dpd,ccdd;
@@ -302,126 +302,6 @@ REFERENCES public.dpd_drug (code) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- -- object: dpd.active_ingredient | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.active_ingredient CASCADE;
--- CREATE TABLE dpd.active_ingredient(
--- 	"extract" text DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	active_ingredient_code integer NOT NULL,
--- 	ingredient text NOT NULL,
--- 	ingredient_supplied_ind text,
--- 	strength text NOT NULL,
--- 	strength_unit text NOT NULL,
--- 	strength_type text,
--- 	dosage_value text,
--- 	base text,
--- 	dosage_unit text,
--- 	notes text,
--- 	ingredient_f text,
--- 	strength_unit_f text,
--- 	strength_type_f text,
--- 	dosage_unit_f text
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.active_ingredient OWNER TO postgres;
--- -- ddl-end --
---
--- -- object: dpd.companies | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.companies CASCADE;
--- CREATE TABLE dpd.companies(
--- 	"extract" text DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	mfr_code text,
--- 	company_code integer NOT NULL,
--- 	company_name text NOT NULL,
--- 	company_type text,
--- 	address_mailing_flag text,
--- 	address_billing_flag text,
--- 	address_notification_flag text,
--- 	address_other text,
--- 	suite_number text,
--- 	street_name text,
--- 	city_name text,
--- 	province text,
--- 	country text,
--- 	postal_code text,
--- 	post_office_box text,
--- 	province_f text,
--- 	country_f text
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.companies OWNER TO postgres;
--- -- ddl-end --
---
--- -- object: dpd.drug_product | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.drug_product CASCADE;
--- CREATE TABLE dpd.drug_product(
--- 	"extract" text NOT NULL DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	product_categorization text,
--- 	class text,
--- 	drug_identification_number text NOT NULL,
--- 	brand_name text NOT NULL,
--- 	descriptor text,
--- 	pediatric_flag text,
--- 	accession_number text,
--- 	number_of_ais text,
--- 	last_update_date date,
--- 	ai_group_no text,
--- 	class_f text,
--- 	brand_name_f text,
--- 	descriptor_f text,
--- 	CONSTRAINT drug_product_drug_code PRIMARY KEY ("extract",drug_code)
---
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.drug_product OWNER TO postgres;
--- -- ddl-end --
---
--- -- object: dpd.pharmaceutical_form | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.pharmaceutical_form CASCADE;
--- CREATE TABLE dpd.pharmaceutical_form(
--- 	"extract" text DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	pharm_form_code integer,
--- 	pharmaceutical_form text,
--- 	pharmaceutical_form_f text
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.pharmaceutical_form OWNER TO postgres;
--- -- ddl-end --
---
--- -- object: dpd.route | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.route CASCADE;
--- CREATE TABLE dpd.route(
--- 	"extract" text DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	route_of_administration_code text,
--- 	route_of_administration text,
--- 	route_of_administration_f text
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.route OWNER TO postgres;
--- -- ddl-end --
---
--- -- object: dpd.status | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.status CASCADE;
--- CREATE TABLE dpd.status(
--- 	"extract" text DEFAULT 'approved',
--- 	drug_code integer NOT NULL,
--- 	current_status_flag text,
--- 	status text,
--- 	history_date date,
--- 	status_f text,
--- 	lot_number text,
--- 	expiration_date text
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.status OWNER TO postgres;
--- -- ddl-end --
---
--- object: public.dpd_drug_route | type: TABLE --
--- DROP TABLE IF EXISTS public.dpd_drug_route CASCADE;
 CREATE TABLE public.dpd_drug_route(
 	dpd_drug_code bigint NOT NULL,
 	dpd_route_code bigint NOT NULL,
@@ -430,29 +310,6 @@ CREATE TABLE public.dpd_drug_route(
 );
 -- ddl-end --
 ALTER TABLE public.dpd_drug_route OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.mp_whitelist | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_whitelist CASCADE;
-CREATE TABLE ccdd.mp_whitelist(
-	drug_code varchar NOT NULL,
-	CONSTRAINT mp_whitelist_pk PRIMARY KEY (drug_code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_whitelist OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.mp_blacklist | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_blacklist CASCADE;
-CREATE TABLE ccdd.mp_blacklist(
-	drug_code varchar NOT NULL,
-	CONSTRAINT mp_blacklist_pk PRIMARY KEY (drug_code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_blacklist OWNER TO postgres;
--- ddl-end --
 
 -- object: public.dpd_drug_form | type: TABLE --
 -- DROP TABLE IF EXISTS public.dpd_drug_form CASCADE;
@@ -540,57 +397,8 @@ REFERENCES public.dpd_route (code) MATCH FULL
 ON DELETE RESTRICT ON UPDATE CASCADE;
 -- ddl-end --
 
--- object: ccdd.ntp_deprecations | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_deprecations CASCADE;
-CREATE TABLE ccdd.ntp_deprecations(
-	code varchar NOT NULL,
-	CONSTRAINT ntp_deprecations_pk PRIMARY KEY (code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_deprecations OWNER TO postgres;
-
-CREATE TABLE ccdd.tm_deprecations(
-	code varchar NOT NULL,
-	status_effective_time date NOT NULL,
-	CONSTRAINT tm_deprecations_pk PRIMARY KEY (code)
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_deprecations OWNER TO postgres;
-
 -- ddl-end --
 
--- -- object: dpd.schedule | type: TABLE --
--- -- DROP TABLE IF EXISTS dpd.schedule CASCADE;
--- CREATE TABLE dpd.schedule(
--- 	drug_code integer NOT NULL,
--- 	"extract" text DEFAULT 'approved',
--- 	schedule varchar,
--- 	schedule_f varchar
--- );
--- -- ddl-end --
--- ALTER TABLE dpd.schedule OWNER TO postgres;
--- -- ddl-end --
---
--- object: ccdd.ntp_dosage_forms | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_dosage_forms CASCADE;
-CREATE TABLE ccdd.ntp_dosage_forms(
-	ntp_dosage_form_code bigint,
-	ntp_dosage_form text,
-	route_of_administration_code text,
-	route_of_administration text,
-	route_of_administration_f text,
-	pharm_form_code text,
-	pharmaceutical_form text,
-	pharmaceutical_form_f text,
-	audit_id bigint
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_dosage_forms OWNER TO postgres;
--- ddl-end --
-
--- object: public.dpd_drug_form_source | type: MATERIALIZED VIEW --
--- DROP MATERIALIZED VIEW IF EXISTS public.dpd_drug_form_source CASCADE;
 CREATE MATERIALIZED VIEW public.dpd_drug_form_source
 AS
 
@@ -776,33 +584,6 @@ SELECT code, max(name_en) as name_en FROM (
 GROUP BY code;
 -- ddl-end --
 ALTER MATERIALIZED VIEW public.dpd_route_source OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.ingredient_stem_csv | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ingredient_stem_csv CASCADE;
-CREATE TABLE ccdd.ingredient_stem_csv(
-	ccdd varchar,
-	top250name varchar,
-	dpd_ingredient varchar,
-	ing_stem varchar,
-	hydrate varchar,
-	ntp_ing varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.ingredient_stem_csv OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.tm_definition | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_definition CASCADE;
-CREATE TABLE ccdd.tm_definition(
-	code bigint NOT NULL,
-	formal_name text NOT NULL,
-	CONSTRAINT tm_definition_pk PRIMARY KEY (code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_definition OWNER TO postgres;
--- ddl-end --
 
 -- object: public.ccdd_tm_ingredient_stem | type: TABLE --
 -- DROP TABLE IF EXISTS public.ccdd_tm_ingredient_stem CASCADE;
@@ -1124,19 +905,7 @@ $$;
 ALTER FUNCTION public.ccdd_normalize_ingredient(varchar) OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.combination_products_csv | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.combination_products_csv CASCADE;
-CREATE TABLE ccdd.combination_products_csv(
-	drug_code bigint NOT NULL,
-	drug_identification_number varchar,
-	mp_formal_name varchar,
-	ntp_formal_name varchar,
-	ntp_type varchar,
-	CONSTRAINT combination_products_csv_pk PRIMARY KEY (drug_code)
 
-);
--- ddl-end --
-ALTER TABLE ccdd.combination_products_csv OWNER TO postgres;
 -- ddl-end --
 
 -- object: public.ccdd_drug_ingredient_option_description | type: VIEW --
@@ -1173,20 +942,6 @@ FROM
 	LEFT JOIN ccdd.ingredient_stem_csv ingst on(ingst.dpd_ingredient = ddio.dpd_named_ingredient_name);
 -- ddl-end --
 ALTER VIEW public.ccdd_drug_ingredient_option_description OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.unit_of_presentation_csv | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.unit_of_presentation_csv CASCADE;
-CREATE TABLE ccdd.unit_of_presentation_csv(
-	drug_code bigint,
-	unit_of_presentation varchar,
-	uop_size varchar,
-	uop_unit_of_measure varchar,
-	calculation varchar,
-	uop_size_insert varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.unit_of_presentation_csv OWNER TO postgres;
 -- ddl-end --
 
 -- object: public.ccdd_drug_dosage_form_by_form | type: MATERIALIZED VIEW --
@@ -1448,20 +1203,6 @@ WHERE
 -- ddl-end --
 ALTER MATERIALIZED VIEW public.ccdd_combination_product_source OWNER TO postgres;
 -- ddl-end --
-
--- object: ccdd.mp_brand_override | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_brand_override CASCADE;
-CREATE TABLE ccdd.mp_brand_override(
-	drug_code bigint NOT NULL,
-	brand text,
-	CONSTRAINT mp_brand_override_pk PRIMARY KEY (drug_code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_brand_override OWNER TO postgres;
--- ddl-end --
-
--- object: public.ccdd_drug_tm | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_drug_tm CASCADE;
 CREATE MATERIALIZED VIEW public.ccdd_drug_tm
 AS
@@ -1521,16 +1262,6 @@ WHERE
 ALTER MATERIALIZED VIEW public.ccdd_drug_tm OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.tm_filter | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_filter CASCADE;
-CREATE TABLE ccdd.tm_filter(
-	tm_code varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_filter OWNER TO postgres;
--- ddl-end --
-
--- object: public.dpd_drug_status | type: TABLE --
 -- DROP TABLE IF EXISTS public.dpd_drug_status CASCADE;
 CREATE TABLE public.dpd_drug_status(
 	dpd_drug_code bigint NOT NULL,
@@ -1614,35 +1345,6 @@ GROUP BY dpd_drug_code, sch.schedule, schedule_policy_mapping.policy_type;
 ALTER MATERIALIZED VIEW public.ccdd_drug_schedule OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.mp_deprecations | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_deprecations CASCADE;
-CREATE TABLE ccdd.mp_deprecations(
-	mp_code varchar NOT NULL,
-	CONSTRAINT mp_deprecations_pk PRIMARY KEY (mp_code)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_deprecations OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.mp_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_release CASCADE;
-CREATE TABLE ccdd.mp_release(
-	mp_code varchar,
-	mp_formal_name text,
-	mp_en_description text,
-	mp_fr_description text,
-	mp_status varchar,
-	mp_status_effective_time varchar,
-	mp_type varchar,
-	"Health_Canada_identifier" text,
-	"Health_Canada_product_name" text
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_release OWNER TO postgres;
--- ddl-end --
-
--- object: public.ccdd_mp_table_candidate | type: VIEW --
 -- DROP VIEW IF EXISTS public.ccdd_mp_table_candidate CASCADE;
 CREATE VIEW public.ccdd_mp_table_candidate
 AS
@@ -1729,20 +1431,6 @@ where
 ALTER VIEW public.ccdd_mp_table_candidate OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.ntp_definition | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_definition CASCADE;
-CREATE TABLE ccdd.ntp_definition(
-	code bigint NOT NULL,
-	formal_name text NOT NULL,
-	CONSTRAINT ntp_definition_pk PRIMARY KEY (code),
-	CONSTRAINT ntp_definition_name UNIQUE (formal_name)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_definition OWNER TO postgres;
--- ddl-end --
-
--- object: public.ccdd_ntp_table | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_ntp_table CASCADE;
 CREATE MATERIALIZED VIEW public.ccdd_ntp_table
 AS
@@ -1992,21 +1680,6 @@ WHERE
 ALTER MATERIALIZED VIEW public.dpd_drug_status_source OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.pseudodin_map | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.pseudodin_map CASCADE;
-CREATE TABLE ccdd.pseudodin_map(
-	pseudodin bigint NOT NULL,
-	drug_code bigint NOT NULL,
-	unit_of_presentation varchar NOT NULL,
-	uop_size_amount varchar NOT NULL,
-	uop_size_unit varchar NOT NULL,
-	CONSTRAINT pseudodin_map_pk PRIMARY KEY (pseudodin)
-
-);
--- ddl-end --
-ALTER TABLE ccdd.pseudodin_map OWNER TO postgres;
--- ddl-end --
-
 -- object: public.ccdd_presentation_source | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_presentation_source CASCADE;
 CREATE MATERIALIZED VIEW public.ccdd_presentation_source
@@ -2087,22 +1760,6 @@ WHERE
 ALTER VIEW public.qa_release_changes_mp OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.ntp_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_release CASCADE;
-CREATE TABLE ccdd.ntp_release(
-	ntp_code varchar,
-	ntp_formal_name text,
-	ntp_en_description text,
-	ntp_fr_description text,
-	ntp_status varchar,
-	ntp_status_effective_time varchar,
-	ntp_type varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_release OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd_mp_table_code | type: INDEX --
 -- DROP INDEX IF EXISTS public.ccdd_mp_table_code CASCADE;
 CREATE INDEX ccdd_mp_table_code ON public.ccdd_mp_table
 	USING btree
@@ -2165,34 +1822,6 @@ CREATE INDEX ccdd_mp_ntp_tm_relationship_mp ON public.ccdd_mp_ntp_tm_relationshi
 	);
 -- ddl-end --
 
--- object: ccdd.tm_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_release CASCADE;
-CREATE TABLE ccdd.tm_release(
-	tm_code varchar,
-	tm_formal_name text,
-	tm_status varchar,
-	tm_status_effective_time varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_release OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.mp_ntp_tm_relationship_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_ntp_tm_relationship_release CASCADE;
-CREATE TABLE ccdd.mp_ntp_tm_relationship_release(
-	mp_code varchar,
-	mp_formal_name text,
-	ntp_code varchar,
-	ntp_formal_name text,
-	tm_code varchar,
-	tm_formal_name text
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_ntp_tm_relationship_release OWNER TO postgres;
--- ddl-end --
-
--- object: public.qa_release_changes_ntp | type: VIEW --
--- DROP VIEW IF EXISTS public.qa_release_changes_ntp CASCADE;
 CREATE VIEW public.qa_release_changes_ntp
 AS
 
@@ -2647,16 +2276,6 @@ order by
 ALTER VIEW public.qa_missing_concepts_pseudodin OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.tm_groupings | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_groupings CASCADE;
-CREATE TABLE ccdd.tm_groupings(
-	tm_code bigint NOT NULL,
-	policy_type integer NOT NULL,
-	policy_reference varchar NOT NULL
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_groupings OWNER TO postgres;
--- ddl-end --
 
 -- object: public.ccdd_tm_special_groupings | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_tm_special_groupings CASCADE;
@@ -2724,17 +2343,7 @@ ALTER MATERIALIZED VIEW public.ccdd_mp_special_groupings OWNER TO postgres;
 -- object: public.ccdd_special_groupings | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_special_groupings CASCADE;
 
-CREATE TABLE ccdd.special_groupings(
-	ccdd_code varchar NOT NULL,
-	ccdd_formal_name text NOT NULL,
-	ccdd_type varchar,
-	policy_type varchar,
-	policy_reference varchar,
-	special_groupings_status text,
-	special_groupings_status_effective_time text
-);
--- ddl-end --
-ALTER TABLE ccdd.special_groupings OWNER TO postgres;
+
 
 CREATE MATERIALIZED VIEW public.ccdd_special_groupings
 AS
@@ -2805,75 +2414,6 @@ FROM (
 ALTER MATERIALIZED VIEW public.ccdd_special_groupings OWNER TO postgres;
 -- ddl-end --
 
--- -- object: public.ccdd_config | type: TABLE --
--- -- DROP TABLE IF EXISTS public.ccdd_config CASCADE;
--- CREATE TABLE public.ccdd_config(
--- 	ccdd_date date,
--- 	dpd_extract_date date
--- );
--- -- ddl-end --
--- ALTER TABLE public.ccdd_config OWNER TO postgres;
--- -- ddl-end --
---
--- object: ccdd.mp_release_candidate | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_release_candidate CASCADE;
-CREATE TABLE ccdd.mp_release_candidate(
-	mp_code varchar,
-	mp_formal_name text,
-	mp_en_description text,
-	mp_fr_description text,
-	mp_status varchar,
-	mp_status_effective_time varchar,
-	mp_type varchar,
-	"Health_Canada_identifier" text,
-	"Health_Canada_product_name" text
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_release_candidate OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.mp_ntp_tm_relationship_release_candidate | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.mp_ntp_tm_relationship_release_candidate CASCADE;
-CREATE TABLE ccdd.mp_ntp_tm_relationship_release_candidate(
-	mp_code varchar,
-	mp_formal_name text,
-	ntp_code varchar,
-	ntp_formal_name text,
-	tm_code varchar,
-	tm_formal_name text
-);
--- ddl-end --
-ALTER TABLE ccdd.mp_ntp_tm_relationship_release_candidate OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.tm_release_candidate | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_release_candidate CASCADE;
-CREATE TABLE ccdd.tm_release_candidate(
-	tm_code varchar,
-	tm_formal_name text,
-	tm_status varchar,
-	tm_status_effective_time varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_release_candidate OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.ntp_release_candidate | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_release_candidate CASCADE;
-CREATE TABLE ccdd.ntp_release_candidate(
-	ntp_code varchar,
-	ntp_formal_name text,
-	ntp_en_description text,
-	ntp_fr_description text,
-	ntp_status varchar,
-	ntp_status_effective_time varchar,
-	ntp_type varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_release_candidate OWNER TO postgres;
--- ddl-end --
-
--- object: public.ccdd_mp_release_candidate | type: MATERIALIZED VIEW --
 -- DROP MATERIALIZED VIEW IF EXISTS public.ccdd_mp_release_candidate CASCADE;
 CREATE MATERIALIZED VIEW public.ccdd_mp_release_candidate
 AS
@@ -3133,34 +2673,6 @@ WHERE
 ALTER VIEW public.qa_release_changes_mp_ntp_tm_relationship_release_candidate OWNER TO postgres;
 -- ddl-end --
 
--- object: ccdd.ntp_full_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.ntp_full_release CASCADE;
-CREATE TABLE ccdd.ntp_full_release(
-	ntp_code varchar,
-	ntp_formal_name text,
-	ntp_en_description text,
-	ntp_fr_description text,
-	ntp_status varchar,
-	ntp_status_effective_time varchar,
-	ntp_type varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.ntp_full_release OWNER TO postgres;
--- ddl-end --
-
--- object: ccdd.tm_full_release | type: TABLE --
--- DROP TABLE IF EXISTS ccdd.tm_full_release CASCADE;
-CREATE TABLE ccdd.tm_full_release(
-	tm_code varchar,
-	tm_formal_name text,
-	tm_status varchar,
-	tm_status_effective_time varchar
-);
--- ddl-end --
-ALTER TABLE ccdd.tm_full_release OWNER TO postgres;
--- ddl-end --
-
--- object: public.qa_new_concepts_ntp | type: VIEW --
 -- DROP VIEW IF EXISTS public.qa_new_concepts_ntp CASCADE;
 CREATE VIEW public.qa_new_concepts_ntp
 AS

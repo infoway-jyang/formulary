@@ -27,14 +27,35 @@ pgloader "$baseDir/dpdloader/dpdload_ia.pgload"
 pgloader "$baseDir/dpdloader/dpdload_dr.pgload"
 pgloader "$baseDir/dpdloader/dpdload_ap.pgload"
 
+dpd_old_database="dpd";
+dpd_old_schema="dpd_old_one";
+
+pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
+psql "$PGDATABASE" < dpdchanges.sql
+
+psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
+rm -f dpdchanges.sql
+
+
+
 # global config for CCDD generation process
 pgloader "$baseDir/ccdd-config.pgload"
 
 # CCDD schema and source data
-psql -v ON_ERROR_STOP=1 < "$baseDir/ccdd-instance-structure.sql"
+psql -v ON_ERROR_STOP=1 < "$baseDir/ccdd.sql"
+echo ccdd
+
 pgloader "$baseDir/ccdd-inputs.pgload"
+
+echo ccdd-inputs
+
 sed -e "s/%QA_DATE%/$ccdd_qa_release_date/g" "$baseDir/ccdd-current-release.pgload.template" | sed -e "s/%RELEASE_DATE%/$ccdd_current_release_date/g" > "$baseDir/ccdd-current-release.pgload"
 pgloader "$baseDir/ccdd-current-release.pgload" && rm "$baseDir/ccdd-current-release.pgload"
+echo ccdd-current-release
+
+psql -v ON_ERROR_STOP=1 < dpdchanges/schema.sql
+psql -v ON_ERROR_STOP=1 < dpdchanges/dpd_changed.sql
+psql -v ON_ERROR_STOP=1 < "$baseDir/ccdd-instance-structure.sql"
 
 # load the data from views into main schema
 psql -v ON_ERROR_STOP=1 < "$baseDir/ccdd-run-views.sql"
@@ -129,13 +150,3 @@ psql -c "copy (select * from qa_mp_ntp_tm_relationship_duplicates_code) to STDOU
 
 echo
 echo Generated "$PGDATABASE" and output in "$distDir"
-
-dpd_old_database="dpd";
-dpd_old_schema="dpd_20181101";
-
-pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
-psql "$PGDATABASE" < dpdchanges.sql
-
-psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
-rm -f dpdchanges.sql
-psql -v ON_ERROR_STOP=1 < dpdchanges/schema.sql
