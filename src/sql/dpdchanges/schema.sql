@@ -50,10 +50,10 @@ HAVING count(*) <> 2;
 
 SELECT drug_code, pharm_form_code, min(status::text) AS status into dpd_changes.pharmaceutical_form_changes
 from
-((SELECT pharm_form_code, drug_code, 'ADDED' AS status
+((SELECT pharm_form_code, drug_code, 'ADDED'::text AS status
 FROM dpd.pharmaceutical_form AS drug_new)
 UNION ALL
-(SELECT pharm_form_code, drug_code, 'REMOVED' AS status
+(SELECT pharm_form_code, drug_code, 'REMOVED'::text AS status
 FROM dpd_old.pharmaceutical_form AS drug_old) ) s
 GROUP BY (drug_code, pharm_form_code)
 HAVING count(*) <> 2;
@@ -62,10 +62,10 @@ SELECT a.drug_code, a.active_ingredient_code, 'Changed' AS status
 INTO dpd_changes.active_ingredient_changes
 FROM (
   SELECT s.drug_code, s.active_ingredient_code, s.dosage_value, s.strength, min(s.status::text) FROM (
-    ((SELECT drug_code, active_ingredient_code, 'Changed' AS status, dosage_value, strength, strength as new_strength
+    ((SELECT drug_code, active_ingredient_code, 'Changed'::text AS status, dosage_value, strength, strength as new_strength
     FROM dpd.active_ingredient AS ingredient_new)
     UNION ALL
-    (SELECT drug_code, active_ingredient_code, 'Changed' AS status, dosage_value, strength, strength as old_strength
+    (SELECT drug_code, active_ingredient_code, 'Changed'::text AS status, dosage_value, strength, strength as old_strength
     FROM dpd_old.active_ingredient AS ingredient_old))
   ) s
   GROUP BY (drug_code, active_ingredient_code, dosage_value, strength)
@@ -77,10 +77,10 @@ HAVING count(*) >= 2;
 INSERT INTO dpd_changes.active_ingredient_changes (drug_code, active_ingredient_code, status)
 (SELECT drug_code, active_ingredient_code, min(status::text) AS status
 FROM
-((SELECT active_ingredient_code, drug_code, 'ADDED' AS status, notes
+((SELECT active_ingredient_code, drug_code, 'ADDED'::text AS status, notes
 FROM dpd.active_ingredient AS drug_new)
 UNION ALL
-(SELECT active_ingredient_code, drug_code, 'REMOVED' AS status, notes
+(SELECT active_ingredient_code, drug_code, 'REMOVED'::text AS status, notes
 FROM dpd_old.active_ingredient AS drug_old) ) s
 GROUP BY (drug_code, active_ingredient_code, notes)
 HAVING count(*) = 1
