@@ -36,8 +36,6 @@ psql "$PGDATABASE" < dpdchanges.sql
 psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
 rm -f dpdchanges.sql
 
-
-
 # global config for CCDD generation process
 pgloader "$baseDir/ccdd-config.pgload"
 

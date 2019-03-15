@@ -38,7 +38,7 @@ FROM dpd.status as drug_new LEFT JOIN dpd_old.status as drug_old ON
 WHERE (drug_new.status <> drug_old.status OR drug_new.history_date <> drug_old.history_date)
   AND drug_new.drug_code IN (SELECT drug_code from dpd_changes.drugs);
 
-SELECT drug_code, route_of_administration_code, min(status) AS status into dpd_changes.route_changes
+SELECT drug_code, route_of_administration_code, min(status::text) AS status into dpd_changes.route_changes
 from
 ((SELECT route_of_administration_code, drug_code, 'ADDED' AS status
 FROM dpd.route AS drug_new)
@@ -48,7 +48,7 @@ FROM dpd_old.route AS drug_old) ) s
 GROUP BY (drug_code, route_of_administration_code)
 HAVING count(*) <> 2;
 
-SELECT drug_code, pharm_form_code, min(status) AS status into dpd_changes.pharmaceutical_form_changes
+SELECT drug_code, pharm_form_code, min(status::text) AS status into dpd_changes.pharmaceutical_form_changes
 from
 ((SELECT pharm_form_code, drug_code, 'ADDED' AS status
 FROM dpd.pharmaceutical_form AS drug_new)
@@ -61,7 +61,7 @@ HAVING count(*) <> 2;
 SELECT a.drug_code, a.active_ingredient_code, 'Changed' AS status
 INTO dpd_changes.active_ingredient_changes
 FROM (
-  SELECT s.drug_code, s.active_ingredient_code, s.dosage_value, s.strength, min(s.status) FROM (
+  SELECT s.drug_code, s.active_ingredient_code, s.dosage_value, s.strength, min(s.status::text) FROM (
     ((SELECT drug_code, active_ingredient_code, 'Changed' AS status, dosage_value, strength, strength as new_strength
     FROM dpd.active_ingredient AS ingredient_new)
     UNION ALL
@@ -75,7 +75,7 @@ GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) >= 2;
 
 INSERT INTO dpd_changes.active_ingredient_changes (drug_code, active_ingredient_code, status)
-(SELECT drug_code, active_ingredient_code, min(status) AS status
+(SELECT drug_code, active_ingredient_code, min(status::text) AS status
 FROM
 ((SELECT active_ingredient_code, drug_code, 'ADDED' AS status, notes
 FROM dpd.active_ingredient AS drug_new)
