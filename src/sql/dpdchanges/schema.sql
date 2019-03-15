@@ -74,8 +74,11 @@ FROM (
 GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) >= 2;
 
+ALTER TABLE dpd_changes.active_ingredient_changes
+ALTER COLUMN status [SET DATA] TYPE text;
+
 INSERT INTO dpd_changes.active_ingredient_changes (drug_code, active_ingredient_code, status)
-(SELECT drug_code, active_ingredient_code, min(status::text) AS status
+(SELECT drug_code, active_ingredient_code, min(s.status) AS status
 FROM
 ((SELECT active_ingredient_code, drug_code, 'ADDED'::text AS status, notes
 FROM dpd.active_ingredient AS drug_new)
