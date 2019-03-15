@@ -75,7 +75,7 @@ GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) >= 2;
 
 ALTER TABLE dpd_changes.active_ingredient_changes
-ALTER COLUMN status [SET DATA] TYPE text;
+ALTER COLUMN status TYPE text;
 
 INSERT INTO dpd_changes.active_ingredient_changes (drug_code, active_ingredient_code, status)
 (SELECT drug_code, active_ingredient_code, min(s.status) AS status
