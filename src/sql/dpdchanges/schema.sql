@@ -45,6 +45,7 @@ FROM dpd.route AS drug_new)
 UNION ALL
 (SELECT route_of_administration_code, drug_code, 'REMOVED' AS status
 FROM dpd_old.route AS drug_old) ) s
+WHERE drug_code IN (SELECT drug_code from dpd_changes.drugs)
 GROUP BY (drug_code, route_of_administration_code)
 HAVING count(*) <> 2;
 
@@ -55,6 +56,7 @@ FROM dpd.pharmaceutical_form AS drug_new)
 UNION ALL
 (SELECT pharm_form_code, drug_code, 'REMOVED'::text AS status
 FROM dpd_old.pharmaceutical_form AS drug_old) ) s
+WHERE drug_code IN (SELECT drug_code from dpd_changes.drugs)
 GROUP BY (drug_code, pharm_form_code)
 HAVING count(*) <> 2;
 
@@ -71,6 +73,7 @@ FROM (
   GROUP BY (drug_code, active_ingredient_code, dosage_value, strength)
   HAVING count(*) <> 2
 ) a
+WHERE drug_code IN (SELECT drug_code from dpd_changes.drugs)
 GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) >= 2;
 
@@ -85,6 +88,7 @@ FROM dpd.active_ingredient AS drug_new)
 UNION ALL
 (SELECT active_ingredient_code, drug_code, 'REMOVED'::text AS status, notes
 FROM dpd_old.active_ingredient AS drug_old) ) s
+WHERE drug_code IN (SELECT drug_code from dpd_changes.drugs)
 GROUP BY (drug_code, active_ingredient_code, notes)
 HAVING count(*) = 1
 );
