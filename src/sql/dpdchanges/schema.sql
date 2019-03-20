@@ -36,7 +36,7 @@ SELECT drug_new.status as new_status, drug_old.status as old_status, drug_new.hi
 FROM dpd.status as drug_new LEFT JOIN dpd_old.status as drug_old ON
      drug_new.drug_code=drug_old.drug_code AND drug_new.current_status_flag = 'Y' AND drug_old.current_status_flag = 'Y'
 WHERE (drug_new.status <> drug_old.status OR drug_new.history_date <> drug_old.history_date)
-  AND drug_new.drug_code IN (SELECT drug_code from dpd_changes.drugs);
+  AND ((drug_new.drug_code IN (SELECT drug_code from dpd_changes.drugs)) OR (drug_new.status = 'MARKETED' AND drug_old.status='APPROVED'));
 
 SELECT drug_code, route_of_administration_code, min(status::text) AS status into dpd_changes.route_changes
 from
