@@ -32,7 +32,7 @@ LEFT JOIN dpd.companies as drug_new ON drug_new.drug_code = dpd_changes.drugs.dr
 LEFT JOIN dpd_old.companies as drug_old ON drug_old.drug_code = dpd_changes.drugs.drug_code
 WHERE drug_new.company_name <> drug_old.company_name;
 
-SELECT drug_new.status as new_status, drug_old.status as old_status, drug_new.history_date as new_history_date, drug_old.history_date as old_history_date, drug_new.drug_code
+SELECT drug_new.status as new_status, drug_old.status as old_status, drug_new.history_date as new_history_date, drug_old.history_date as old_history_date, drug_new.drug_code into dpd_changes.status_changes
 FROM dpd.status as drug_new LEFT JOIN dpd_old.status as drug_old ON
      drug_new.drug_code=drug_old.drug_code AND drug_new.current_status_flag = 'Y' AND drug_old.current_status_flag = 'Y'
 WHERE (
