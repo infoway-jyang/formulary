@@ -93,12 +93,12 @@ ALTER COLUMN status TYPE text;
 INSERT INTO dpd_changes.active_ingredient_changes (drug_code, active_ingredient_code, status)
 (SELECT drug_code, active_ingredient_code, min(s.status) AS status
 FROM
-((SELECT active_ingredient_code, drug_code, 'ADDED'::text AS status, notes
+((SELECT active_ingredient_code, drug_code, 'ADDED'::text AS status
 FROM dpd.active_ingredient AS drug_new)
 UNION ALL
-(SELECT active_ingredient_code, drug_code, 'REMOVED'::text AS status, notes
+(SELECT active_ingredient_code, drug_code, 'REMOVED'::text AS status
 FROM dpd_old.active_ingredient AS drug_old) ) s
 WHERE drug_code IN (SELECT drug_code from dpd_changes.drugs)
-GROUP BY (drug_code, active_ingredient_code, notes)
+GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) = 1
 );
