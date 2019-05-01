@@ -27,8 +27,8 @@ pgloader "$baseDir/dpdloader/dpdload_ia.pgload"
 pgloader "$baseDir/dpdloader/dpdload_dr.pgload"
 pgloader "$baseDir/dpdloader/dpdload_ap.pgload"
 
-dpd_old_database="dpd";
-dpd_old_schema="dpd_old_one";
+dpd_old_database="ccdd_2019_04_04_144049";
+dpd_old_schema="dpd";
 
 pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
 pg_dump dpd --schema="$dpd_old_schema" > dpdchanges.sql
