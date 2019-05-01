@@ -50,7 +50,7 @@ pgloader "$baseDir/ccdd-current-release.pgload" && rm "$baseDir/ccdd-current-rel
 # load the data from views into main schema
 psql -v ON_ERROR_STOP=1 < "$baseDir/ccdd-run-views.sql"
 
-pgloader "$baseDir/dpdchanges/ingredient_stem_csv.pgload"
+# pgloader "$baseDir/dpdchanges/ingredient_stem_csv.pgload"
 psql -v ON_ERROR_STOP=1 < dpdchanges/schema.sql
 
 # create output folder, then export CCDD concepts as CSV files to output

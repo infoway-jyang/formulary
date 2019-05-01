@@ -10,16 +10,16 @@ DROP TABLE IF EXISTS dpd_changes.active_ingredient_changes;
 DROP TABLE IF EXISTS dpd_changes.drugs;
 DROP TABLE IF EXISTS dpd_changes.dpd_changed_drug_codes;
 
-
 SELECT drug_new.* into dpd_changes.new_drug
 FROM dpd.drug_product as drug_new LEFT JOIN dpd_old.drug_product as drug_old ON
      drug_new.drug_code = drug_old.drug_code
 WHERE drug_old.drug_code is null AND drug_new."class" = 'Human';
 
-SELECT drug_code into dpd_changes.drugs
-From ccdd.mp_release_candidate
-left join dpd.drug_product
-on ccdd.mp_release_candidate."Health_Canada_identifier" = dpd.drug_product.drug_identification_number;
+select distinct drug_code into dpd_changes.drugs
+from dpd.active_ingredient as ai
+inner join ccdd.ingredient_stem_csv as isc
+on ai.ingredient = isc.dpd_ingredient
+where isc.ccdd = 'Y';
 
 SELECT drug_new.brand_name as new_brand_name, drug_old.brand_name as old_brand_name, dpd_changes.drugs.drug_code into dpd_changes.drug_product_changes
 FROM dpd_changes.drugs
@@ -104,36 +104,36 @@ GROUP BY (drug_code, active_ingredient_code)
 HAVING count(*) = 1
 );
 
-SELECT ROW_NUMBER() OVER (ORDER BY dpd_ingredient) AS row_num, dpd_ingredient,
-string_agg( distinct case when ccdd is null then 'NULL' else ccdd end, 'changed to') AS ccdd,
-string_agg( distinct case when top250name is null then 'NULL' else top250name end, ' changed to ') AS top250name,
-string_agg( distinct case when ing_stem is null then 'NULL' else ing_stem end, ' changed to ') AS ing_stem,
-string_agg( distinct case when hydrate is null then 'NULL' else hydrate end, ' changed to ') AS hydrate,
-string_agg( distinct case when ntp_ing is null then 'NULL' else ntp_ing end, ' changed to ') AS ntp_ing,
-CASE WHEN count(dpd_ingredient) = 2 THEN 'Changed'
-ELSE min(status) END AS status
-INTO dpd_changes.ingredient_stem_csv_changes
-FROM
-  (SELECT 'Added' AS status, T1.*
-  FROM (
-    SELECT * FROM public.ingredient_stem_csv_old where ccdd = 'Y'
-    EXCEPT
-    SELECT * FROM ccdd.ingredient_stem_csv where ccdd = 'Y'
-  ) AS T1
-  UNION ALL
-  SELECT 'Removed' AS status,  T2.*
-  FROM (
-     SELECT * FROM ccdd.ingredient_stem_csv where ccdd = 'Y'
-     EXCEPT
-     SELECT * FROM public.ingredient_stem_csv_old where ccdd = 'Y'
-     ) AS T2
-  ) sub
-  GROUP BY dpd_ingredient
-  ORDER BY dpd_ingredient;
-
-SELECT dpd_changes.ingredient_stem_csv_changes.row_num, active_i_new.*
-INTO dpd_changes.ingredient_stem_and_active_ingredient_changes
-FROM dpd_changes.ingredient_stem_csv_changes 
-LEFT JOIN dpd.active_ingredient AS active_i_new
-ON active_i_new.ingredient = dpd_changes.ingredient_stem_csv_changes.dpd_ingredient
-ORDER BY dpd_changes.ingredient_stem_csv_changes.row_num
+-- SELECT ROW_NUMBER() OVER (ORDER BY dpd_ingredient) AS row_num, dpd_ingredient,
+-- string_agg( distinct case when ccdd is null then 'NULL' else ccdd end, 'changed to') AS ccdd,
+-- string_agg( distinct case when top250name is null then 'NULL' else top250name end, ' changed to ') AS top250name,
+-- string_agg( distinct case when ing_stem is null then 'NULL' else ing_stem end, ' changed to ') AS ing_stem,
+-- string_agg( distinct case when hydrate is null then 'NULL' else hydrate end, ' changed to ') AS hydrate,
+-- string_agg( distinct case when ntp_ing is null then 'NULL' else ntp_ing end, ' changed to ') AS ntp_ing,
+-- CASE WHEN count(dpd_ingredient) = 2 THEN 'Changed'
+-- ELSE min(status) END AS status
+-- INTO dpd_changes.ingredient_stem_csv_changes
+-- FROM
+--   (SELECT 'Added' AS status, T1.*
+--   FROM (
+--     SELECT * FROM public.ingredient_stem_csv_old where ccdd = 'Y'
+--     EXCEPT
+--     SELECT * FROM ccdd.ingredient_stem_csv where ccdd = 'Y'
+--   ) AS T1
+--   UNION ALL
+--   SELECT 'Removed' AS status,  T2.*
+--   FROM (
+--      SELECT * FROM ccdd.ingredient_stem_csv where ccdd = 'Y'
+--      EXCEPT
+--      SELECT * FROM public.ingredient_stem_csv_old where ccdd = 'Y'
+--      ) AS T2
+--   ) sub
+--   GROUP BY dpd_ingredient
+--   ORDER BY dpd_ingredient;
+--
+-- SELECT dpd_changes.ingredient_stem_csv_changes.row_num, active_i_new.*
+-- INTO dpd_changes.ingredient_stem_and_active_ingredient_changes
+-- FROM dpd_changes.ingredient_stem_csv_changes
+-- LEFT JOIN dpd.active_ingredient AS active_i_new
+-- ON active_i_new.ingredient = dpd_changes.ingredient_stem_csv_changes.dpd_ingredient
+-- ORDER BY dpd_changes.ingredient_stem_csv_changes.row_num
