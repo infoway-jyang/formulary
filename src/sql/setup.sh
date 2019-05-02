@@ -28,11 +28,12 @@ pgloader "$baseDir/dpdloader/dpdload_dr.pgload"
 pgloader "$baseDir/dpdloader/dpdload_ap.pgload"
 psql -c "ALTER SCHEMA dpd RENAME TO dpd_temp"
 
-dpd_old_database="ccdd_2019_04_29_093141";
+dpd_old_database="ccdd_2019_04_04_144049";
 dpd_old_schema="dpd";
 
 pg_dump $dpd_old_database --schema="$dpd_old_schema" > dpdchanges.sql
 psql -v "$PGDATABASE" < dpdchanges.sql
+
 
 psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
 psql -c "ALTER SCHEMA dpd_temp RENAME TO dpd"
@@ -127,7 +128,7 @@ cp "$baseDir/test/ccdd-coded-attribute-draft.csv" "$distDir/coded_attribute_${cc
 # @todo add more once the team is briefed on the new ones
 psql -c "copy (select * from qa_release_changes_mp WHERE mp_code NOT IN ('02212188', '02480360', '02480379')) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_current_release_date}_qa_release_changes_mp.csv"
 psql -c "copy (select * from qa_release_changes_ntp WHERE ntp_code NOT IN ('9013250')) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_current_release_date}_qa_release_changes_ntp.csv"
-psql -c "copy (select * from qa_release_changes_tm) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_qa_release_date}_current_release_changes_tm.csv"
+psql -c "copy (select * from qa_release_changes_tm) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_release_date}_qa_release_changes_tm.csv"
 psql -c "copy (select * from qa_release_changes_mp_ntp_tm_relationship WHERE mp_code NOT IN ('02212188', '02480360', '02480379')) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_current_release_date}_qa_release_changes_mp_ntp_tm_relationship.csv"
 psql -c "copy (select * from qa_release_changes_mp_release_candidate WHERE mp_code NOT IN ('02212188', '02480360', '02480379')) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_current_release_date}_release_changes_mp.csv"
 psql -c "copy (select * from qa_release_changes_ntp_release_candidate WHERE ntp_code NOT IN ('9013250')) to STDOUT with CSV HEADER FORCE QUOTE * NULL 'NA' DELIMITER ',';" > "$distDir/${ccdd_current_date}_from_${ccdd_current_release_date}_release_changes_ntp.csv"
