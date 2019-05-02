@@ -26,16 +26,17 @@ pgloader "$baseDir/dpdloader/dpdload.pgload"
 pgloader "$baseDir/dpdloader/dpdload_ia.pgload"
 pgloader "$baseDir/dpdloader/dpdload_dr.pgload"
 pgloader "$baseDir/dpdloader/dpdload_ap.pgload"
+psql -c "ALTER SCHEMA dpd RENAME TO dpd_temp"
 
-dpd_old_database="dpd";
-dpd_old_schema="dpd_old_one";
+dpd_old_database="ccdd_2019_04_29_093141";
+dpd_old_schema="dpd";
 
-pg_dump -C dpd --schema="$dpd_old_schema" > dpdchanges.sql
-pg_dump dpd --schema="$dpd_old_schema" > dpdchanges.sql
-
+pg_dump $dpd_old_database --schema="$dpd_old_schema" > dpdchanges.sql
 psql -v "$PGDATABASE" < dpdchanges.sql
 
 psql -c "ALTER SCHEMA $dpd_old_schema RENAME TO dpd_old"
+psql -c "ALTER SCHEMA dpd_temp RENAME TO dpd"
+
 rm -f dpdchanges.sql
 
 # global config for CCDD generation process
